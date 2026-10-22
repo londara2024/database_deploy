@@ -1,6 +1,9 @@
 # PostgreSQL 16 (Alpine) on Ubuntu with Docker
 
 > Having problems? See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+> Remote access via Cloudflare Tunnel: see [CLOUDFLARE_TUNNEL.md](CLOUDFLARE_TUNNEL.md).
+> Host a Next.js app with the database: see [NEXTJS_HOSTING.md](NEXTJS_HOSTING.md).
+> Connect from another PC with Docker via Cloudflare: see [DOCKER_DB_VIA_CLOUDFLARE.md](DOCKER_DB_VIA_CLOUDFLARE.md).
 
 ## 1. Copy the project to the server
 ```bash
@@ -38,7 +41,7 @@ docker compose exec postgres psql -U appuser -d appdb
 
 From your PC (secure, recommended — keep `POSTGRES_BIND=127.0.0.1`):
 ```bash
-ssh -L 5432:127.0.0.1:5432 user@SERVER_IP
+ssh -L 5432:127.0.0.1:337 user@SERVER_IP
 # then connect to localhost:5432 with DBeaver / pgAdmin / your app
 ```
 

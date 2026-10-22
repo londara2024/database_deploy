@@ -1,0 +1,18 @@
+# Run this on ANOTHER PC (any network) to reach the database through Cloudflare.
+# DBeaver on that PC then connects to localhost:15432.
+services:
+  db-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: db-tunnel
+    restart: unless-stopped
+    # Must listen on 0.0.0.0 inside the container so the published port works
+    command: >
+      access tcp
+      --hostname ${DB_HOSTNAME:-db.comshop.me.uk}
+      --url 0.0.0.0:15432
+    environment:
+      # Only needed if the route is protected by Cloudflare Access (service token)
+      TUNNEL_SERVICE_TOKEN_ID: ${CF_ACCESS_CLIENT_ID:-}
+      TUNNEL_SERVICE_TOKEN_SECRET: ${CF_ACCESS_CLIENT_SECRET:-}
+    ports:
+      - "127.0.0.1:${LOCAL_PORT:-15432}:15432"

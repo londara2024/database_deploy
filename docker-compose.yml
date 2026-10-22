@@ -39,6 +39,35 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "True"
+    ports:
+      # Web UI for Cloudflare Tunnel: Service URL http://localhost:5050
+      - "127.0.0.1:${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    # Fixed name so other compose projects (e.g. Next.js) can join it
+    name: dbnet
+
 volumes:
   pgdata:
     name: postgres16_data
+  pgadmin_data:
+    name: pgadmin_data

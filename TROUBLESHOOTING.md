@@ -45,10 +45,10 @@ docker compose up -d
 ### 3. Also check the client (DBeaver / pgAdmin / app)
 - **Host/port**
   - `POSTGRES_BIND=127.0.0.1` (default) → use an SSH tunnel
-    (DBeaver **SSH** tab, or `ssh -L 5432:127.0.0.1:5432 user@SERVER_IP`), Host = `localhost`.
+    (DBeaver **SSH** tab, or `ssh -L 5432:127.0.0.1:337 user@SERVER_IP`), Host = `localhost`.
   - `POSTGRES_BIND=0.0.0.0` → Host = server IP.
   - If PostgreSQL is also installed on your PC, local port 5432 is taken and you may be hitting
-    **your local Postgres** instead. Tunnel to another port: `ssh -L 15432:127.0.0.1:5432 user@SERVER_IP`
+    **your local Postgres** instead. Tunnel to another port: `ssh -L 15432:127.0.0.1:337 user@SERVER_IP`
     and connect to `localhost:15432`.
 - **Database** = `appdb` (your `POSTGRES_DB`).
 - **Special characters**: `$`, `#`, quotes in the password can be mangled by Docker Compose when reading `.env`
@@ -63,31 +63,31 @@ docker compose ps
 docker compose logs --tail=100 postgres
 ```
 Common causes: `.env` missing (`cp .env.example .env`), `POSTGRES_PASSWORD` empty,
-or port 5432 already used on the server (`sudo ss -ltnp | grep 5432`) → change `POSTGRES_PORT`.
+or port 337 already used on the server (`sudo ss -ltnp | grep 337`) → change `POSTGRES_PORT`.
 
 ## `Connection refused` / timeout from PC
 
 ### Test the port from Windows (PowerShell)
 ```powershell
-Test-NetConnection SERVER_IP -Port 5432
-# example: Test-NetConnection 192.168.18.32 -Port 5432
+Test-NetConnection SERVER_IP -Port 337
+# example: Test-NetConnection 192.168.18.8 -Port 337
 ```
 - `TcpTestSucceeded : True` → port is reachable; if login still fails, it's a password/user/database problem
   (see the password section above).
 - `TcpTestSucceeded : False` → network problem: wrong IP, container not running, `POSTGRES_BIND=127.0.0.1`,
-  or a firewall blocking 5432.
+  or a firewall blocking 337.
 
 Using an SSH tunnel? Test the local end instead: `Test-NetConnection localhost -Port 5432`.
 
 From Linux / the server itself:
 ```bash
-nc -zv SERVER_IP 5432
-sudo ss -ltnp | grep 5432     # on the server: shows 0.0.0.0:5432 or 127.0.0.1:5432
+nc -zv SERVER_IP 337
+sudo ss -ltnp | grep 337     # on the server: shows 0.0.0.0:337 or 127.0.0.1:337
 ```
 
 ### Common causes
 - Default bind is `127.0.0.1` → you must use an SSH tunnel (see above).
-- With `0.0.0.0`, open port 5432 in the cloud provider's firewall / security group for your IP.
+- With `0.0.0.0`, open port 337 in the cloud provider's firewall / security group for your IP.
   Note: Docker bypasses `ufw`, so ufw rules do not affect published ports.
 
 ## `init/*.sql` did not run
