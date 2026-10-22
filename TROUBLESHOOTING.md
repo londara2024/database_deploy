@@ -66,6 +66,26 @@ Common causes: `.env` missing (`cp .env.example .env`), `POSTGRES_PASSWORD` empt
 or port 5432 already used on the server (`sudo ss -ltnp | grep 5432`) → change `POSTGRES_PORT`.
 
 ## `Connection refused` / timeout from PC
+
+### Test the port from Windows (PowerShell)
+```powershell
+Test-NetConnection SERVER_IP -Port 5432
+# example: Test-NetConnection 192.168.18.32 -Port 5432
+```
+- `TcpTestSucceeded : True` → port is reachable; if login still fails, it's a password/user/database problem
+  (see the password section above).
+- `TcpTestSucceeded : False` → network problem: wrong IP, container not running, `POSTGRES_BIND=127.0.0.1`,
+  or a firewall blocking 5432.
+
+Using an SSH tunnel? Test the local end instead: `Test-NetConnection localhost -Port 5432`.
+
+From Linux / the server itself:
+```bash
+nc -zv SERVER_IP 5432
+sudo ss -ltnp | grep 5432     # on the server: shows 0.0.0.0:5432 or 127.0.0.1:5432
+```
+
+### Common causes
 - Default bind is `127.0.0.1` → you must use an SSH tunnel (see above).
 - With `0.0.0.0`, open port 5432 in the cloud provider's firewall / security group for your IP.
   Note: Docker bypasses `ufw`, so ufw rules do not affect published ports.
