@@ -1,5 +1,7 @@
 # PostgreSQL 16 (Alpine) on Ubuntu with Docker
 
+> Having problems? See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ## 1. Copy the project to the server
 ```bash
 scp -r database_hosting user@SERVER_IP:/opt/
